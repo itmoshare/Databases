@@ -1,0 +1,1 @@
+mongoimport --db db --jsonArray --collection units --file ./mongo_data.json

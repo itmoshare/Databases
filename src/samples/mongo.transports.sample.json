@@ -1,0 +1,23 @@
+{
+	"id" : 1,
+	"plate_number": "M178AP",
+	"manufacture_date": "01.01.1970",
+	"type": "bus",
+	"technical_passport_expiration_date": "01.01.1973",
+	"problems " : [ 
+	],
+	"passports" : [],
+	"route" : "12A"
+}
+
+{
+	"id" : 2,
+	"manufacture_date":"01.01.1975",
+	"type" : "subway train",
+	"technical_passport_expiration_date": "01.01.1977",
+	"line" : 1,
+	"number" : 2314,
+	"trains" : [2,4,124,531],
+	"problems " : [ 
+	],
+}

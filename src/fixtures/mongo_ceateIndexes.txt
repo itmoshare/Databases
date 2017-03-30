@@ -1,0 +1,3 @@
+db.units.createIndex({number:"hashed"})
+db.units.createIndex({type:1})
+

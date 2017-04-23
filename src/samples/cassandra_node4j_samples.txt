@@ -1,0 +1,56 @@
+CREATE TABLE bus_stops (
+    id int PRIMARY KEY,
+    title text,
+    longitude double,
+    latitude double
+);
+ 
+CREATE KEYSPACE db WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factory':1};
+ 
+INSERT INTO bus_stops (id,tittle,longtitude,latitude) values (1,'Chernyshevskaya',13.24,16.42);
+ 
+ 
+curl -H "Accept: application/json; charset=UTF-8" -H "Content-Type: application/json" -X POST http://localhost:7474/db/data/cypher -d '{                                                      
+  "query" : "CREATE (n:ROUTE { number : {number} }) RETURN n",
+  "params" : {
+    "number" : 1
+  }
+}'
+ 
+ 
+ 
+curl -H "Accept: application/json; charset=UTF-8" -H "Content-Type: application/json" -X POST http://localhost:7474/db/data/cypher -d '{                                                      
+  "query" : "CREATE (n:SCHEDULE_ENTRY { day : {day}, time: {time} }) RETURN n",
+  "params" : {
+    "day" : "monday",
+    "time" : "13.00"
+  }
+}'
+ 
+curl -H "Accept: application/json; charset=UTF-8" -H "Content-Type: application/json" -X POST http://localhost:7474/db/data/cypher -d '{                                                      
+  "query" : "CREATE (n:STOP { stop_id : {stop_id} }) RETURN n",
+  "params" : {
+    "stop_id" : 2
+  }
+}'
+ 
+ 
+ 
+curl -H "Accept: application/json; charset=UTF-8" -H "Content-Type: application/json" -X POST http://localhost:7474/db/data/node/0/relationships -d '{
+  "to" : "http://localhost:7474/db/data/node/1",
+  "type" : "Comes Before"
+}
+}'
+ 
+curl -H "Accept: application/json; charset=UTF-8" -H "Content-Type: application/json" -X POST http://localhost:7474/db/data/node/1/relationships -d '{
+  "to" : "http://localhost:7474/db/data/node/2",
+  "type" : "Comes Before"
+}
+}'
+ 
+curl -H "Accept: application/json; charset=UTF-8" -H "Content-Type: application/json" -X POST http://localhost:7474/db/data/cypher -d '{
+  "query" : "MATCH (x {STOP: {stop_id}})-[r]->(n) RETURN type(r), n.stop_id",
+  "params" : {
+     "stop_id" : 2
+  }
+}'

@@ -1,2 +1,3 @@
 src/fixtures/mongo_data.json
 src/fixtures/redis_data.txt
+src/fixtures/cassandra_data.cql

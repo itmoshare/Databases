@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Neo4jClient;
 using ServiceStack.Redis;
 
 namespace RestApi
@@ -28,7 +29,13 @@ namespace RestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool());
+            services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool("http://localhost:6379"));
+            services.AddScoped<IGraphClient>(_ =>
+            {
+                var graphClient = new GraphClient(new Uri("http://localhost:7474/db/data"), "neo4j", "SecretPassword");
+                graphClient.Connect();
+                return graphClient;
+            });
             // Add framework services.
             services.AddMvc();
         }

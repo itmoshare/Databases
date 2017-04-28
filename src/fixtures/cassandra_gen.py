@@ -37,7 +37,9 @@ def getBusStops():
         stopsData.append({'name':stopNames[i],'lon':stopLongs[i],'lat':stopLats[i]})
     return stopsData
 
-script = """CREATE KEYSPACE db WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factory':1}";
+	
+f = open('cassandra_data.cql', 'w')
+print("""CREATE KEYSPACE db WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factory':1}";
 use db;
 CREATE TABLE bus_stops (
     id int PRIMARY KEY,
@@ -46,13 +48,9 @@ CREATE TABLE bus_stops (
     latitude double
 );
 BEGIN BATCH
-"""
+""", file=f)
 stops = getBusStops()
 for i in range(1000000):
     index = random.randint(0, len(stops) - 1)
-    script += 'INSERT INTO bus_stops (id,tittle,longtitude,latitude) values ({},\'{}\',{},{});'.format(i,stops[index]['name'],stops[index]['lon'],stops[index]['lat'])
-script+='APPLY BATCH;'
-with codecs.open('cassandra_data.cql','w','utf-16') as fp:
-    fp.write(script)
-    fp.close()
-
+    print('INSERT INTO bus_stops (id,tittle,longtitude,latitude) values ({},\'{}\',{},{});'.format(i,stops[index]['name'],stops[index]['lon'],stops[index]['lat']),file=f)
+print('APPLY BATCH;', file=f)

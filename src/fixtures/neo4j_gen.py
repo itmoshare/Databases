@@ -4,13 +4,13 @@ import codecs
 def genRoutes():
     script = ""
     for i in range(1000000):
-        script += "CREATE(r{}:Route {id:{}})\n".format(i,i)
+        script += "CREATE(r{}:Route {{id:{}}})\n".format(i,i)
     return script
 
 def genStops():
     script = ""
     for i in range(1000000):
-        script += "CREATE(s{}:Stop {id:{}})\n".format(i,i)
+        script += "CREATE(s{}:Stop {{id:{}}})\n".format(i,i)
     return script
 
 def genTimings():
@@ -21,7 +21,7 @@ def genTimings():
         hourString = str(hour).zfill(2)
         minute = random.randint(0,59)
         minuteString = str(minute).zfill(2)
-        script += "CREATE(t{}:Timing {time:'{}:{}' day:{}})\n".format(i,hourString,minuteString,day)
+        script += "CREATE(t{}:Timing {{time:'{}:{}' day:{}}})\n".format(i,hourString,minuteString,day)
     return script
 script = genRoutes() + genStops() + genTimings()
 

@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestApi.Models;
 using ServiceStack.Redis;
@@ -40,6 +37,15 @@ namespace RestApi.Controllers
             {
                 redis.Set(id.ToString(), value);
             }
+        }
+
+        /// <summary>
+        /// Get unit ids near some point (in radius) (stored procedure, if redis can store procedures!)
+        /// </summary>
+        [HttpGet("near/{x}/{y}/{radius}")]
+        public IEnumerable<int> GetNearUnits(double x, double y, double radius)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cassandra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,8 @@ namespace RestApi
             BsonClassMap.RegisterClassMap<Unit>();
             // Redis
             services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool("http://localhost:6379"));
+            // Cassandra
+            services.AddSingleton<ICluster>(_ => Cluster.Builder().AddContactPoint("127.0.0.1").Build());
             // Neo4j
             services.AddScoped<IGraphClient>(_ =>
             {

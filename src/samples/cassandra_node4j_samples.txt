@@ -5,7 +5,7 @@ CREATE TABLE bus_stops (
     latitude double
 );
  
-CREATE KEYSPACE db WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factory':1};
+CREATE KEYSPACE db WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factor':1};
  
 INSERT INTO bus_stops (id,tittle,longtitude,latitude) values (1,'Chernyshevskaya',13.24,16.42);
  

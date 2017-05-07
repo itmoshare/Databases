@@ -33,13 +33,22 @@ namespace RestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string host2 = "pc.mokhnatkin.org";
+            string user = "db_cw";
+            string password = "LimonTree";
+
             // Mongo
             services.AddSingleton<IMongoClient>(_ => new MongoClient());
             BsonClassMap.RegisterClassMap<Unit>();
             // Redis
             services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool("http://localhost:6379"));
             // Cassandra
-            services.AddSingleton<ICluster>(_ => Cluster.Builder().AddContactPoint("127.0.0.1").Build());
+            services.AddSingleton<ICluster>(_ => 
+                Cluster.Builder()
+                .AddContactPoint(host2)
+                .WithPort(100)
+                .WithCredentials(user, password)
+                .Build());
             // Neo4j
             services.AddScoped<IGraphClient>(_ =>
             {

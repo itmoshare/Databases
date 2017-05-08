@@ -43,7 +43,7 @@ namespace RestApi
             // Redis
             services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool("http://localhost:6379"));
             // Cassandra
-            services.AddSingleton<ICluster>(_ => 
+            services.AddSingleton<ICluster>(_ =>
                 Cluster.Builder()
                 .AddContactPoint(host2)
                 .WithPort(100)
@@ -52,7 +52,7 @@ namespace RestApi
             // Neo4j
             services.AddScoped<IGraphClient>(_ =>
             {
-                var graphClient = new GraphClient(new Uri("http://localhost:7474/db/data"), "neo4j", "SecretPassword");
+                var graphClient = new GraphClient(new Uri($"http://{host2}:105/db/data"), "db_cw", "LimonTree");
                 graphClient.Connect();
                 return graphClient;
             });

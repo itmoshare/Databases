@@ -20,8 +20,8 @@ namespace RestApi.Controllers
         /// <summary>
         /// Create relation between bus stop and route number
         /// </summary>
-        [HttpPut("{unitStopId}/{routeNumber}")]
-        public IActionResult CreateTimeTableItem(int unitStopId, string routeNumber)
+        [HttpPut]
+        public IActionResult CreateScheduleEntry([FromBody]ScheduleEntry scheduleEntry)
         {
             throw new NotImplementedException();
         }
@@ -30,7 +30,7 @@ namespace RestApi.Controllers
         /// Delete relation between bus stop and route number
         /// </summary>
         [HttpDelete]
-        public IActionResult DeleteTimeTableItem([FromBody]TimeTableItem timeTableItem)
+        public IActionResult DeleteScheduleEntry([FromBody]ScheduleEntry scheduleEntry)
         {
             throw new NotImplementedException();
         }
@@ -39,13 +39,13 @@ namespace RestApi.Controllers
         /// Get relations by unit stop and route id.
         /// </summary>
         [HttpGet("{unitStopId>/{routeNumber}")]
-        public IEnumerable<TimeTableItem> GetRoutes(int unitStopId, string routeNumber)
+        public IEnumerable<ScheduleEntry> GetRoutes(int unitStopId, string routeNumber)
         {
             throw new NotImplementedException();
         }
 
         [HttpPut]
-        public IActionResult UpdateTimeTableItem([FromBody]TimeTableItem lastItem, [FromBody]TimeTableItem newItem)
+        public IActionResult UpdateScheduleEntry([FromBody]ScheduleEntry lastItem, [FromBody]ScheduleEntry newItem)
         {
             throw new NotImplementedException();
         }

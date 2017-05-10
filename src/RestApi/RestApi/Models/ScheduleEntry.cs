@@ -2,7 +2,7 @@
 
 namespace RestApi.Models
 {
-    public class UnitRoute
+    public class ScheduleEntry
     {
         public int UnitStopId { get; set; }
 

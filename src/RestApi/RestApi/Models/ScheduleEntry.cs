@@ -6,7 +6,7 @@ namespace RestApi.Models
     {
         public int UnitStopId { get; set; }
 
-        public int RouteNumber { get; set; }
+        public string RouteNumber { get; set; }
 
         public TimeSpan Time { get; set; }
 

@@ -1,1 +1,7 @@
-cqlsh -f cassandra_data.cql
+запускаем cqlsh
+вводим поочереди команды из cassandra_data_preinsert.cql по необходимости
+затем команда c полным путем
+COPY bus_stops FROM cassandra_data.csv;
+если неправильный поярдок столбцов(хз как определяется) - поправить в скрипте)
+
+cqlsh --request-timeout=60 --cqlversion=3.4.2 -u db_cw -p LimonTree pc.mokhnatkin.org 100

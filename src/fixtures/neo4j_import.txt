@@ -1,0 +1,22 @@
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///neo4j_data_routes.csv' AS line
+CREATE (:Route { id: line[0]});
+
+CREATE INDEX ON :Route(id);
+
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///neo4j_data_stops.csv' AS line
+CREATE (:Stop { id: line[0]});
+
+CREATE INDEX ON :Stop(id);
+
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///neo4j_data_timings.csv' AS line
+CREATE (:Timing {time: line[0], day:line[1], id:line[2]});
+
+CREATE INDEX ON :Timing(id);
+
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///neo4j_data_links.csv' AS line
+MATCH (r:Route { id: line[0] }, (t:Timing { id: line[1] }), (s:Stop { id: line[2] })
+CREATE (r)-[:STOPS_AT_TIME]->(t)-[:APPLIES_TO_STOP]->(s);

@@ -90,7 +90,10 @@ namespace RestApi.Controllers
         [HttpGet("type/{type}")]
         public IActionResult GetByType(string type)
         {
-            throw new NotImplementedException();
+            var db = _mongoClient.GetDatabase(DbName);
+            var function = $"function(unitType) {{ return getUnitsByType(unitType);}},{type}";
+            db.RunCommand<BsonValue>(function);
+            //TODO 
         }
     }
 }

@@ -3,6 +3,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import json
 import codecs
+import csv
 
 def getBusStops():
     url = 'http://transport.orgp.spb.ru/Portal/transport/stops/list'
@@ -37,22 +38,9 @@ def getBusStops():
         stopsData.append({'name':stopNames[i],'lon':stopLongs[i],'lat':stopLats[i]})
     return stopsData
 
-	
-f = open('cassandra_data_preinsert.cql', 'w')
-print("""CREATE KEYSPACE db WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factory':1}";
-use db;
-DROP TABLE bus_stops;
-CREATE TABLE bus_stops (
-    id int PRIMARY KEY,
-    title text,
-    longitude double,
-    latitude double
-);
-""", file=f)
-f = open('cassandra_data.cql', 'w')
-print('BEGIN BATCH', file=f)
 stops = getBusStops()
-for i in range(1000000):
-    index = random.randint(0, len(stops) - 1)
-    print('INSERT INTO bus_stops (id,title,longitude,latitude) values ({},\'{}\',{},{});'.format(i,stops[index]['name'],stops[index]['lon'],stops[index]['lat']),file=f)
-print('APPLY BATCH;', file=f)
+with open('cassandra_data.csv', "w") as output:
+    writer = csv.writer(output, lineterminator='\n')
+    for i in range(1000000):
+        index = random.randint(0, len(stops) - 1)
+        writer.writerow([i,stops[index]['lat'],stops[index]['lon'],stops[index]['name']])

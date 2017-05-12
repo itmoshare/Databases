@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using RestApi.Models;
@@ -92,8 +93,8 @@ namespace RestApi.Controllers
         {
             var db = _mongoClient.GetDatabase(DbName);
             var function = $"function(unitType) {{ return getUnitsByType(unitType);}},{type}";
-            db.RunCommand<BsonValue>(function);
-            //TODO 
+            var result = db.RunCommand<List<Unit>>(function);
+            return Ok(result);
         }
     }
 }

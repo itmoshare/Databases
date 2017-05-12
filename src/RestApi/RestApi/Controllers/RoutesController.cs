@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Neo4jClient;
@@ -52,7 +53,7 @@ namespace RestApi.Controllers
 
             // Create stop
             _graphClient.Cypher
-                .Merge("(stop:STOP { stop_id : {stop_id} })")
+                .Merge("(stop:Stop { stop_id : {stop_id} })")
                 .OnCreate()
                 .Set("stop = {newUnitStop}")
                 .WithParams(new
@@ -63,7 +64,7 @@ namespace RestApi.Controllers
 
             // Create schedule entry
             _graphClient.Cypher
-                .Merge("(schedule_entry:SCHEDULE_ENTRY { day : {day}, time: {time} })")
+                .Merge("(schedule_entry:Timing { day : {day}, time: {time} })")
                 .OnCreate()
                 .Set("schedule_entry = {new_schedule_entry}")
                 .WithParams(new
@@ -75,20 +76,20 @@ namespace RestApi.Controllers
 
             // Create route -> schedule_entry relation
             _graphClient.Cypher
-                .Match("(route:Route)", "(schedule_entry:SCHEDULE_ENTRY)")
+                .Match("(route:Route)", "(schedule_entry:Timing)")
                 .Where((RouteNeo4JModel route) => route.RouteNumber == newRoute.RouteNumber)
                 .AndWhere((ScheduleNeo4JModel schedule_entry) => schedule_entry.DayOfWeek == newScheduler.DayOfWeek
                     && schedule_entry.Time == newScheduler.Time)
-                .Create("route-[:FRIENDS_WITH]->schedule_entry")
+                .Create("route-[:STOPS_AT_TIME]->schedule_entry")
                 .ExecuteWithoutResults();
 
             // Create unit_stop -> schedule_entry relation
             _graphClient.Cypher
-                .Match("(unit_stop:Stop)", "(schedule_entry:SCHEDULE_ENTRY)")
+                .Match("(unit_stop:Stop)", "(schedule_entry:Timing)")
                 .Where((UnitStopNeo4JModel unit_stop) => unit_stop.Id == newUnitStop.Id)
                 .AndWhere((ScheduleNeo4JModel schedule_entry) => schedule_entry.DayOfWeek == newScheduler.DayOfWeek
                                                                   && schedule_entry.Time == newScheduler.Time)
-                .Create("unit_stop-[:FRIENDS_WITH]->schedule_entry")
+                .Create("unit_stop-[:APPLIES_TO_STOP]->schedule_entry")
                 .ExecuteWithoutResults();
 
             return Ok();
@@ -106,13 +107,22 @@ namespace RestApi.Controllers
         /// <summary>
         /// Get relations by unit stop and route id.
         /// </summary>
-        [HttpGet("{unitStopId>/{routeNumber}")]
-        public IEnumerable<ScheduleEntry> GetRoutes(int unitStopId, string routeNumber)
+        [HttpGet("{unitStopId}/{routeNumber}")]
+        public IEnumerable<ScheduleEntry> GetTimingsForStopAndRoute(int unitStopId, int routeNumber)
         {
-            // Я хз как делать
-            _graphClient.Cypher
-                .Match("(route:ROUTE)-[schedule_entry:SCHEDULE_ENTRY]->(unit_stop:STOP)");
-            throw new NotImplementedException();
+            var timings = _graphClient.Cypher
+                .Match("(route:ROUTE)-[schedule_entry:Timing]->(unit_stop:STOP)")
+                .Where((RouteNeo4JModel route, UnitStopNeo4JModel stop) => 
+                route.RouteNumber == routeNumber && stop.Id == unitStopId)
+                .Return(se => se.As<ScheduleNeo4JModel>());
+            var result = timings.Results.Select(snm => new ScheduleEntry
+            {
+                UnitStopId = unitStopId,
+                DayOfWeek = snm.DayOfWeek,
+                RouteNumber = routeNumber,
+                Time = snm.Time
+            });
+            return result;
         }
 
         [HttpPut]

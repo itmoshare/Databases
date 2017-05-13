@@ -35,13 +35,13 @@ namespace RestApi
         {
             string host2 = "pc.mokhnatkin.org";
             string user = "db_cw";
-            string password = "LimonTree";
+            string password = "LimonTr3";
 
             // Mongo
             services.AddSingleton<IMongoClient>(_ => new MongoClient());
             BsonClassMap.RegisterClassMap<Unit>();
             // Redis
-            services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool("http://localhost:6379"));
+            services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool());
             // Cassandra
             services.AddSingleton<ICluster>(_ =>
                 Cluster.Builder()
@@ -52,7 +52,7 @@ namespace RestApi
             // Neo4j
             services.AddScoped<IGraphClient>(_ =>
             {
-                var graphClient = new GraphClient(new Uri($"http://{host2}:105/db/data"), "db_cw", "LimonTree");
+                var graphClient = new GraphClient(new Uri($"http://{host2}:105/db/data"), "db_cw", password);
                 graphClient.Connect();
                 return graphClient;
             });

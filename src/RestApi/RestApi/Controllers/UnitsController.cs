@@ -12,7 +12,7 @@ namespace RestApi.Controllers
     [Microsoft.AspNetCore.Mvc.Route("api/units")]
     public class UnitsController : Controller
     {
-        public const string DbName = "db";
+        public const string DbName = "test";
         public const string UnitsCollectionName = "units";
 
         private readonly IMongoClient _mongoClient;
@@ -92,8 +92,8 @@ namespace RestApi.Controllers
         public IActionResult GetByType(string type)
         {
             var db = _mongoClient.GetDatabase(DbName);
-            var function = $"function(unitType) {{ return getUnitsByType(unitType);}},{type}";
-            var result = db.RunCommand<List<Unit>>(function);
+            var function = $"getUnitsByType(\'{type}\')";
+            var result = db.RunCommand<List<Unit>>(new JsonCommand<List<Unit>>($"{{ eval:\"{function}\"}}"));
             return Ok(result);
         }
     }

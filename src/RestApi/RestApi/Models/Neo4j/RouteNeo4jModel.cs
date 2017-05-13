@@ -2,6 +2,6 @@
 {
     public class RouteNeo4JModel
     {
-        public int RouteNumber { get; set; }
+        public string id { get; set; }
     }
 }

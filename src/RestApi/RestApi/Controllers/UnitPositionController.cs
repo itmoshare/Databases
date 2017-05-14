@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using RestApi.Models;
@@ -45,7 +46,12 @@ namespace RestApi.Controllers
         [HttpGet("near/{x}/{y}/{radius}")]
         public IEnumerable<int> GetNearUnits(double x, double y, double radius)
         {
-            throw new NotImplementedException();
+            using(var redis = _redisManager.GetClient())
+            {
+                var redisResponse = redis.ExecLuaSha("2a003c9ed98db5ab1401a9372ec19ec037a719e7", x.ToString(), 
+                    y.ToString(), radius.ToString());
+                return redisResponse.Children.Select(c => Int32.Parse(c.Text));
+            }
         }
     }
 }

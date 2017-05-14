@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using RestApi.Models;
 using ServiceStack;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 
 namespace RestApi.Controllers
 {
@@ -88,13 +90,14 @@ namespace RestApi.Controllers
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        [HttpGet("type/{type}")]
-        public IActionResult GetByType(string type)
+        [HttpGet("broken/{type}/{malfunctionType}/{year}")]
+        public IActionResult GetBrokenUnits(string type, string malfunctionType, int year)
         {
             var db = _mongoClient.GetDatabase(DbName);
-            var function = $"getUnitsByType(\'{type}\')";
-            var result = db.RunCommand<List<Unit>>(new JsonCommand<List<Unit>>($"{{ eval:\"{function}\"}}"));
-            return Ok(result);
+            var function = $"getBrokenUnits(\'{type}\', \'{malfunctionType}\',{year})";
+            var result = db.RunCommand<BsonDocument>(new JsonCommand<BsonDocument>($"{{ eval:\"{function}\"}}"));
+            var units = result["retval"].AsBsonArray.Cast<BsonDocument>().Select(d => BsonSerializer.Deserialize<Unit>(d)).ToList();
+            return Ok(units);
         }
     }
 }

@@ -129,5 +129,11 @@ namespace RestApi.Controllers
             });
             return result;
         }
+        [HttpGet("routeId")]
+        public IEnumerable<object> GetRouteWorkingHours(string routeId)
+        {
+
+            return null;
+        } 
     }
 }

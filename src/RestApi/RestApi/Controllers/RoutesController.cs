@@ -129,11 +129,13 @@ namespace RestApi.Controllers
             });
             return result;
         }
-        [HttpGet("routeId")]
-        public IEnumerable<object> GetRouteWorkingHours(string routeId)
+        [HttpGet("{routeId}/minutes")]
+        public double GetRouteWorkingMinutes(string routeId)
         {
-
-            return null;
+           var workingMinutesValue = _graphClient.Cypher.Call($"example.getRouteWorkingMinutes(\"{routeId}\")")
+                .Yield("workMinutes AS workMinutes")
+                .Return( workMinutes => workMinutes.As<double>()).Results;
+            return workingMinutesValue.First();
         } 
     }
 }

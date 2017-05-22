@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Cassandra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Neo4jClient;
+using RestApi.Core;
 using RestApi.Models;
 using ServiceStack.Redis;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace RestApi
 {
@@ -50,14 +49,25 @@ namespace RestApi
                 .WithCredentials(user, password)
                 .Build());
             // Neo4j
-            services.AddScoped<IGraphClient>(_ =>
+            services.AddTransient<IGraphClient>(_ =>
             {
-                var graphClient = new GraphClient(new Uri($"http://{host2}:105/db/data"), "db_cw", password);
-                graphClient.Connect();
-                return graphClient;
+                var neo4JServersList = new[]
+                {
+                    new Uri($"http://{host2}:8000/db/data"),
+                    new Uri($"http://{host2}:8001/db/data"),
+                    new Uri($"http://{host2}:8002/db/data")
+                };
+                var clusterGraphClient = new GraphClientCluster(neo4JServersList, "neo4j", password);
+                return clusterGraphClient.GetActive();
             });
             // Add framework services.
             services.AddMvc();
+
+            // Register the Swagger generator, defining one or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info {Title = "Rest API", Version = "v1"});
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +77,15 @@ namespace RestApi
             loggerFactory.AddDebug();
 
             app.UseMvc();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            });
         }
     }
 }

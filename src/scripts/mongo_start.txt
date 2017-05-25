@@ -1,0 +1,15 @@
+./mongod.exe --dbpath D:\software_data\mongo --shardsvr --bind_ip 192.168.1.141 --port 27000
+./mongod.exe --dbpath D:\software_data\mongo_2 --shardsvr --bind_ip 192.168.1.141 --port 27001
+./mongod.exe --dbpath D:\software_data\mongo_3 --shardsvr --bind_ip 192.168.1.141 --port 27002
+
+./mongod.exe --configsvr --replSet cw-conf --dbpath D:\software_data\mongo_config --port 27003
+
+rs.initiate()
+
+./mongos.exe --configdb cw-conf/192.168.1.141:27003 --port 27100
+
+sh.addShard("192.168.1.141:27000");
+sh.addShard("192.168.1.141:27001");
+sh.addShard("192.168.1.141:27002");
+
+./mongo.exe --host 192.168.1.141 --port 27100

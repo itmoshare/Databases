@@ -19,12 +19,22 @@ namespace RestApi.Middleware
 
         public void Add(Staff staff)
         {
-            throw new NotImplementedException();
+            using(var redis = redisclient.GetClient()) 
+            {
+                redis.Set(staff.Id.ToString(), JsonConvert.Serialize<Staff>(staff));
+                var unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                redis.Set($"t{staff.Id}", unixTimestamp.ToString());
+            }
         }
 
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            using(var redis = redisclient.GetClient())
+            {
+                if(!redis.ContainsKey(id.ToString()))
+                    return;
+                throw new NotImplementedException();//TODO
+            }
         }
 
         public bool TryGet(int id, out Staff staff)

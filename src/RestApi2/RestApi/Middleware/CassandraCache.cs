@@ -10,6 +10,7 @@ namespace RestApi.Middleware
     public class CassandraCache : ICacheLayer
     {
         private ICluster _cassandraCluster;
+        private const string KeySpace = "db";
 
         public CassandraCache(ICluster cassandraCluster)
         {
@@ -18,19 +19,28 @@ namespace RestApi.Middleware
 
         public void Add(Staff staff)
         {
-            throw new NotImplementedException();
+            using (var session = _cassandraCluster.Connect(KeySpace))
+            {
+                session.Execute($"insert into staff values({staff.Id}, {staff.FirstName}, {staff.LastName}, {staff.Birthday}, {staff.Position}, {staff.Salary});");
+                var unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                session.Execute($"insert into lifetime values({staff.Id}, {unixTimestamp.ToString()});");
+            }
         }
 
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            using (var session = _cassandraCluster.Connect(KeySpace))
+            {
+                session.Execute($"delete from staff where Id = {id};");
+                session.Execute($"delete from lifetime where staff_Id = {id};");
+            }
         }
 
         public bool TryGet(int id, out Staff staff)
         {
-            using (var session = _cassandraCluster.Connect())
+            using (var session = _cassandraCluster.Connect(KeySpace))
             {
-                Row res = session.Execute($"select * from staff where id = {id};").FirstOrDefault();
+                Row res = session.Execute($"select * from staff where Id = {id};").FirstOrDefault();
                 if (res != null)
                 {
                     staff = new Staff

@@ -33,7 +33,8 @@ namespace RestApi.Middleware
             {
                 if(!redis.ContainsKey(id.ToString()))
                     return;
-                throw new NotImplementedException();//TODO
+                redis.DeleteById<string>(id.ToString());
+                redis.DeleteById<string>($"t{id}");
             }
         }
 

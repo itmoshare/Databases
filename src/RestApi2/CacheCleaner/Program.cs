@@ -12,7 +12,7 @@ namespace CacheCleaner
 	{
 		static void Main(string[] args)
 		{
-			
+            InitTimer();
 		}
 
 		public static void InitTimer()
@@ -21,7 +21,7 @@ namespace CacheCleaner
 			timer.Interval = 60000;
 			timer.Elapsed += (object sender, ElapsedEventArgs eargs) => {
 				timer.Enabled = false;
-				var cacheCleaner = new CacheCleaner("", "","");
+				var cacheCleaner = new CacheCleaner();
 				cacheCleaner.ClearRedis(300);
 				cacheCleaner.ClearCassandra(600);
 				timer.Enabled = true;

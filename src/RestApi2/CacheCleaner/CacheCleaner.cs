@@ -14,16 +14,16 @@ namespace CacheCleaner
 		private readonly IRedisClientsManager _redisClients;
 		private readonly ICluster _cassandra;
 
-		public CacheCleaner(string cassandraConnect, string cassandraKeySpace, string redisConnect)
+		public CacheCleaner()
 		{
-			string host2 = "pc.mokhnatkin.org";
-			string user = "db_cw";
-			string password = "LimonTr3";
+			string host2 = "35.189.70.205";
+			string user = "cassandra";
+			string password = "cassandra";
 
-			_keysapce = cassandraKeySpace;
+			_keysapce = "db";
 			_cassandra = Cluster.Builder()
-				.AddContactPoint("")
-				.WithPort(100)
+				.AddContactPoint(host2)
+				.WithPort(9042)
 				.WithCredentials(user, password)
 				.Build();
 
@@ -53,11 +53,17 @@ namespace CacheCleaner
 		{
 			using (var session = _cassandra.Connect(_keysapce))
 			{
-				RowSet lifetimes = session.Execute("");
+				RowSet lifetimes = session.Execute("select * from lifetimes;");
 				foreach (var time in lifetimes)
 				{
 					var lifeTime = (DateTime.Now - UnixTimestampToDateTime(Double.Parse(time.GetValue<string>("time")))).TotalSeconds;
-				}
+                    if(lifeTime > maxLifeTimeSeconds)
+                    {
+                        var id = time.GetValue<int>("staff_Id");
+                        session.Execute($"delete from lifetimes where staff_Id = {id};");
+                        session.Execute($"delete from staff where Id = {id};");
+                    }
+                }
 			}
 		}
 

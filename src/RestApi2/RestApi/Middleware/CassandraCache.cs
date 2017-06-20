@@ -21,9 +21,9 @@ namespace RestApi.Middleware
         {
             using (var session = _cassandraCluster.Connect(KeySpace))
             {
-                session.Execute($"insert into staff values({staff.Id}, {staff.FirstName}, {staff.LastName}, {staff.Birthday}, {staff.Position}, {staff.Salary});");
+                session.Execute($"insert into staff (Id, FirstName, LastName, Birthday, Position, Salary) values({staff.Id}, '{staff.FirstName}', '{staff.LastName}', '2016-04-06', '{staff.Position}', {staff.Salary});");
                 var unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-                session.Execute($"insert into lifetime values({staff.Id}, {unixTimestamp.ToString()});");
+                session.Execute($"insert into lifetimes (Id, staff_Id, time) values({staff.Id}, {staff.Id}, '{unixTimestamp.ToString()}');");
             }
         }
 
@@ -32,7 +32,7 @@ namespace RestApi.Middleware
             using (var session = _cassandraCluster.Connect(KeySpace))
             {
                 session.Execute($"delete from staff where Id = {id};");
-                session.Execute($"delete from lifetime where staff_Id = {id};");
+                session.Execute($"delete from lifetimes where staff_Id = {id};");
             }
         }
 
@@ -45,12 +45,12 @@ namespace RestApi.Middleware
                 {
                     staff = new Staff
                     {
-                        Id = res.GetValue<int>("Id"),
-                        FirstName = res.GetValue<string>("FirstName"),
-                        LastName = res.GetValue<string>("LastName"),
-                        Birthday = res.GetValue<DateTime>("Birthday"),
-                        Position = res.GetValue<string>("Position"),
-                        Salary = res.GetValue<decimal>("Salary")
+                        Id = res.GetValue<int>("id"),
+                        FirstName = res.GetValue<string>("firstname"),
+                        LastName = res.GetValue<string>("lastname"),
+                        Birthday = DateTime.Now,//res.GetValue<DateTime>("birthday"),
+                        Position = res.GetValue<string>("position"),
+                        Salary = res.GetValue<decimal>("salary")
                     };
                     return true;
                 }

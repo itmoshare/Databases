@@ -10,6 +10,6 @@ namespace RestApi.Model
         {
         }
 
-        public DbSet<Staff> Staff { get; set; }
+        public DbSet<Staff> staff { get; set; }
     }
 }

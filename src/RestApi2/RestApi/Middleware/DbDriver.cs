@@ -29,7 +29,7 @@ namespace RestApi.Middleware
 
         public IEnumerable<Staff> ListAll()
         {
-            return _mySqlContext.Staff.ToList();
+            return _mySqlContext.staff.ToList();
         }
 
         public Staff Get(int id)
@@ -42,7 +42,7 @@ namespace RestApi.Middleware
                 _firstCache.Add(staff);
                 return staff;
             }
-            staff = _mySqlContext.Staff.Find(id);
+            staff = _mySqlContext.staff.Find(id);
             if (staff != null)
             {
                 _firstCache.Add(staff);
@@ -53,7 +53,7 @@ namespace RestApi.Middleware
 
         public void Add(Staff staff)
         {
-            _mySqlContext.Staff.Add(staff);
+            _mySqlContext.staff.Add(staff);
             _mySqlContext.SaveChanges();
             //add to one cache level
             _middleCache.Add(staff); 
@@ -61,7 +61,7 @@ namespace RestApi.Middleware
 
         public void Delete(int id)
         {
-            _mySqlContext.Staff.Remove(new Staff { Id = id });
+            _mySqlContext.staff.Remove(new Staff { Id = id });
             _mySqlContext.SaveChanges();
             _firstCache.Remove(id);
             _middleCache.Remove(id);

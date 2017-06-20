@@ -12,6 +12,7 @@ using ServiceStack.Redis;
 using Swashbuckle.AspNetCore.Swagger;
 using RestApi.Model;
 using MySQL.Data.EntityFrameworkCore.Extensions;
+using RestApi.Middleware;
 
 namespace RestApi
 {
@@ -32,22 +33,23 @@ namespace RestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string host2 = "pc.mokhnatkin.org";
+            string host2 = "35.189.70.205";
             string user = "db_cw";
             string password = "LimonTr3";
 
+           
             //MySql
-            services.AddDbContext<MySqlContext>(options => options.UseMySQL(""));
+            services.AddDbContext<MySqlContext>(options => options.UseMySQL("Server=35.189.70.205;Database=db;Uid=root;Pwd=root;"));
             // Redis
             services.AddScoped<IRedisClientsManager>(_ => new RedisManagerPool());
             // Cassandra
             services.AddSingleton<ICluster>(_ =>
                 Cluster.Builder()
                 .AddContactPoint(host2)
-                .WithPort(100)
-                .WithCredentials(user, password)
+                .WithPort(9042)
+                .WithCredentials("cassandra", "cassandra")
                 .Build());
-
+            services.AddSingleton<IStaffDriver, DbDriver>();
             // Add framework services.
             services.AddMvc();
 

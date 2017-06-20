@@ -22,8 +22,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.4.3" />
-    <PackageReference Include="MySql.Data" Version="6.9.9" />
-    <PackageReference Include="MySql.Data.Entity" Version="6.9.9" />
+    <PackageReference Include="MySql.Data" Version="7.0.7-m61" />
+    <PackageReference Include="MySql.Data.Entity" Version="7.0.7-m61" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="7.0.7-m61" />
     <PackageReference Include="Neo4jClient" Version="2.0.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />

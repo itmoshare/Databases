@@ -19,9 +19,9 @@ namespace RestApi.Middleware
 
         public void Add(Staff staff)
         {
-            using(var redis = redisclient.GetClient()) 
+            using(var redis = _redisclient.GetClient()) 
             {
-                redis.Set(staff.Id.ToString(), JsonConvert.Serialize<Staff>(staff));
+                redis.Set(staff.Id.ToString(), JsonConvert.SerializeObject(staff));
                 var unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
                 redis.Set($"t{staff.Id}", unixTimestamp.ToString());
             }
@@ -29,7 +29,7 @@ namespace RestApi.Middleware
 
         public void Remove(int id)
         {
-            using(var redis = redisclient.GetClient())
+            using(var redis = _redisclient.GetClient())
             {
                 if(!redis.ContainsKey(id.ToString()))
                     return;
